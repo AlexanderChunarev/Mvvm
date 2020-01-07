@@ -11,7 +11,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 class ServiceBuilder {
-    fun buildService(service: Class<GitHubService>): GitHubService {
+    private fun buildService(service: Class<GitHubService>): GitHubService {
         return Retrofit.Builder()
             .baseUrl(APIConfiguration.BASE_URL)
             .addConverterFactory(
@@ -34,4 +34,6 @@ class ServiceBuilder {
                 level = HttpLoggingInterceptor.Level.BODY
             })
     }
+
+    fun gitHubService() = buildService(GitHubService::class.java)
 }

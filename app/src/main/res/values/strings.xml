@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">GitHubView</string>
+    <string name="login">Login</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="_120">120</string>
+    <string name="_30">30</string>
+    <string name="enter_user_login">Enter user login</string>
+    <string name="search">Search</string>
 </resources>

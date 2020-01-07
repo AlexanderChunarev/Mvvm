@@ -6,8 +6,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.example.githubview.dao.RepoDao
 import com.example.githubview.dao.UserDao
 import com.example.githubview.databases.RepoDataBase
-import com.example.githubview.databases.UserDataBase
-import com.example.githubview.entities.User
+import com.example.githubview.responces.UserResponse
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.*
 import org.junit.After
@@ -17,32 +16,28 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class RoomDataBaseTest {
-    private lateinit var dbUser: UserDataBase
     private lateinit var dbRepo: RepoDataBase
     private lateinit var userDao: UserDao
     private lateinit var repoDao: RepoDao
 
     @Before
     fun initDb() {
-        dbUser = Room.inMemoryDatabaseBuilder<UserDataBase>(
-            InstrumentationRegistry.getInstrumentation().context,
-            UserDataBase::class.java
-        ).build()
-
         dbRepo = Room.inMemoryDatabaseBuilder<RepoDataBase>(
             InstrumentationRegistry.getInstrumentation().context,
             RepoDataBase::class.java
         ).build()
 
-        userDao = dbUser.userDao()
-        repoDao = dbRepo.repoDao()
+        dbRepo.apply {
+            userDao = userDao()
+            repoDao = repoDao()
+        }
     }
 
     @Test
     fun whenInsertEmployeeThenReadTheSameOne() = runBlocking {
-        lateinit var dbEmployees: List<User>
+        lateinit var dbEmployees: List<UserResponse>
 
-        GlobalScope.launch(Dispatchers.IO) {
+        launch(Dispatchers.IO) {
             DbDataHelper.listOfUsers.forEach {
                 userDao.insert(it)
             }
@@ -55,25 +50,23 @@ class RoomDataBaseTest {
 
     @Test
     fun whenInsert() = runBlocking {
-        var usersIdFromDb: List<User>
+        var usersIdFromDb: List<UserResponse>
 
-        GlobalScope.launch(Dispatchers.IO) {
+        launch(Dispatchers.IO) {
             DbDataHelper.listOfUsers.forEach {
                 userDao.insert(it)
             }
             usersIdFromDb = userDao.getAll()
-            DbDataHelper.listOfRepos.forEach {
-                repoDao.insert(it)
-            }
-
-            assertEquals(1, repoDao.getUsersWithPlaylists(usersIdFromDb[0].id).size)
-            assertEquals(4, repoDao.getUsersWithPlaylists(usersIdFromDb[1].id).size)
-            assertEquals(2, repoDao.getUsersWithPlaylists(usersIdFromDb[2].id).size)
+            repoDao.insertAll(DbDataHelper.listOfRepos)
+            println(usersIdFromDb[0].login)
+            assertEquals(1, repoDao.getAllReposByLogin(usersIdFromDb[0].login).size)
+            assertEquals(3, repoDao.getAllReposByLogin(usersIdFromDb[1].login).size)
+            assertEquals(3, repoDao.getAllReposByLogin(usersIdFromDb[2].login).size)
         }.join()
     }
 
     @After
     fun closeDb() {
-        dbUser.close()
+        dbRepo.close()
     }
 }

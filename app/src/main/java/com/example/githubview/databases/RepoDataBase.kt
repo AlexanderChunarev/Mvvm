@@ -4,20 +4,26 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.example.githubview.converters.OwnerConverter
 import com.example.githubview.dao.RepoDao
+import com.example.githubview.dao.UserDao
 import com.example.githubview.entities.Repository
 import com.example.githubview.entities.User
+import com.example.githubview.responces.RepoResponse
+import com.example.githubview.responces.UserResponse
 
 @Database(
-    entities = [Repository::class, User::class],
+    entities = [RepoResponse::class, UserResponse::class],
     version = 1,
     exportSchema = false
 )
+@TypeConverters(OwnerConverter::class)
 abstract class RepoDataBase : RoomDatabase() {
     abstract fun repoDao(): RepoDao
+    abstract fun userDao(): UserDao
 
     companion object {
-
         private const val DATABASE = "repos"
 
         @Volatile

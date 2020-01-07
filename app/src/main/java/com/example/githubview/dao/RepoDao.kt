@@ -1,21 +1,17 @@
 package com.example.githubview.dao
 
 import androidx.room.*
-import com.example.githubview.entities.Repository
-import com.example.githubview.entities.UserRepos
+import com.example.githubview.responces.RepoResponse
 
 @Dao
 interface RepoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(repository: Repository)
+    fun insertAll(repos: List<RepoResponse>)
 
-    @Delete
-    fun delete(repository: Repository)
-
-    @Query("SELECT * FROM repository WHERE userId = :userId")
-    fun getAll(userId: Int): List<Repository>
+    @Query("DELETE FROM RepoResponse WHERE ownerLogin = :login")
+    fun delete(login: String)
 
     @Transaction
-    @Query("SELECT * FROM repository WHERE userId = :userId")
-    fun getUsersWithPlaylists(userId: Int): List<UserRepos>
+    @Query("SELECT * FROM RepoResponse WHERE ownerLogin = :login")
+    fun getAllReposByLogin(login: String): List<RepoResponse>
 }

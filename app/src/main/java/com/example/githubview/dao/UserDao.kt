@@ -1,22 +1,16 @@
 package com.example.githubview.dao
 
 import androidx.room.*
-import com.example.githubview.entities.User
+import com.example.githubview.responces.UserResponse
 
 @Dao
 interface UserDao {
-    @Insert
-    fun insert(user: User)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(user: UserResponse)
 
-    @Update
-    fun update(user: User)
+    @Query("DELETE FROM UserResponse WHERE login = :login")
+    fun delete(login: String)
 
-    @Delete
-    fun delete(user: User)
-
-    @Query("SELECT * FROM user")
-    fun getAll(): List<User>
-
-    @Query("SELECT * FROM user WHERE id = :id")
-    fun getById(id: Int): User
+    @Query("SELECT * FROM UserResponse")
+    fun getAll(): List<UserResponse>
 }
