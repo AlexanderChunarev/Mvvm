@@ -7,4 +7,10 @@
     <string name="_30">30</string>
     <string name="enter_user_login">Enter user login</string>
     <string name="search">Search</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="name_repo">Name</string>
+    <string name="kotlin_lang">Kotlin</string>
+    <string name="updated_on">Updated on 14 Nov 2019</string>
 </resources>

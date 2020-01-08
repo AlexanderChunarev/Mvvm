@@ -1,5 +1,6 @@
 package com.example.githubview.viewmodels
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,8 +18,8 @@ class MainActivityViewModel(
     private val userRepository: UserRepository
 ) : ViewModel() {
     val message: SingleLiveEvent<MessageUtils> = SingleLiveEvent()
-    val userLiveData = MutableLiveData<List<UserResponse>>()
-    val repoLiveData = MutableLiveData<List<RepoResponse>>()
+    private val userLiveData = MutableLiveData<List<UserResponse>>()
+    private val repoLiveData = MutableLiveData<List<RepoResponse>>()
 
 
     fun addUserData(login: String) = viewModelScope.launch(Dispatchers.IO) {
@@ -34,12 +35,18 @@ class MainActivityViewModel(
         }
     }
 
-    fun getUsersData() = viewModelScope.launch(Dispatchers.Main) {
-        userLiveData.value = userRepository.fetchUsers()
+    fun getUsersData(): LiveData<List<UserResponse>> {
+        viewModelScope.launch(Dispatchers.Main) {
+            userLiveData.value = userRepository.fetchUsers()
+        }
+        return userLiveData
     }
 
-    fun getUserReposData(login: String) = viewModelScope.launch(Dispatchers.Main) {
-        repoLiveData.value = userRepository.fetchUserRepo(login)
+    fun getUserReposData(login: String): LiveData<List<RepoResponse>> {
+        viewModelScope.launch(Dispatchers.Main) {
+            repoLiveData.value = userRepository.fetchUserRepo(login)
+        }
+        return repoLiveData
     }
 
     fun deleteUserData(login: String) = viewModelScope.launch(Dispatchers.IO) {
